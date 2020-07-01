@@ -89,8 +89,11 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
     m_loadConfigFailSchedulePolicy = new ExponentialSchedulePolicy(m_configUtil.getOnErrorRetryInterval(),
         m_configUtil.getOnErrorRetryInterval() * 8);
     gson = new Gson();
+    // 第一次同步
     this.trySync();
+    // 定时刷新
     this.schedulePeriodicRefresh();
+    // 长轮询刷新
     this.scheduleLongPollingRefresh();
   }
 
@@ -134,6 +137,7 @@ public class RemoteConfigRepository extends AbstractConfigRepository {
 
     try {
       ApolloConfig previous = m_configCache.get();
+      // 加载远程配置
       ApolloConfig current = loadApolloConfig();
 
       //reference equals means HTTP 304
